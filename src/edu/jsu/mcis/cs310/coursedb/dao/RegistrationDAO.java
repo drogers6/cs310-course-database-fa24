@@ -1,5 +1,7 @@
 package edu.jsu.mcis.cs310.coursedb.dao;
 
+import com.github.cliftonlabs.json_simple.JsonArray;
+import com.github.cliftonlabs.json_simple.JsonObject;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,6 +11,14 @@ import java.sql.Statement;
 public class RegistrationDAO {
     
     private final DAOFactory daoFactory;
+    
+    private final String QUERY_CREATE = "INSERT INTO registration (studentid, termid, crn) VALUES (?, ?, ?)";
+    
+    private final String QUERY_DELETEALL = "DELETE FROM registration WHERE termid = ? AND studentid = ?";
+    
+    private final String QUERY_DELETE = "DELETE FROM registration WHERE termid = ? AND studentid = ? AND CRN = ?";
+    
+    private final String QUERY_SELECT = "SELECT * FROM registration WHERE studentid = ? AND termid = ? ORDER BY crn";
     
     RegistrationDAO(DAOFactory daoFactory) {
         this.daoFactory = daoFactory;
@@ -26,8 +36,21 @@ public class RegistrationDAO {
             Connection conn = daoFactory.getConnection();
             
             if (conn.isValid(0)) {
+               
                 
-                // INSERT YOUR CODE HERE
+                ps = conn.prepareStatement(QUERY_CREATE);
+                ps.setInt(1, studentid);
+                ps.setInt(2, termid);
+                ps.setInt(3, crn);
+                
+                int updateCount = ps.executeUpdate();
+                
+                if (updateCount > 0) {
+            
+                    result = true;
+
+                }
+                
                 
             }
             
@@ -57,8 +80,20 @@ public class RegistrationDAO {
             Connection conn = daoFactory.getConnection();
             
             if (conn.isValid(0)) {
+               
+                ps = conn.prepareStatement(QUERY_DELETE);
+                ps.setInt(1, studentid);
+                ps.setInt(2, termid);
+                ps.setInt(3, crn);
                 
-                // INSERT YOUR CODE HERE
+                int updateCount = ps.executeUpdate();
+                
+                if (updateCount > 0) {
+            
+                    result = true;
+
+                }
+                
                 
             }
             
@@ -87,8 +122,19 @@ public class RegistrationDAO {
             Connection conn = daoFactory.getConnection();
             
             if (conn.isValid(0)) {
+                               
+                ps = conn.prepareStatement(QUERY_DELETEALL);
+                ps.setInt(1, studentid);
+                ps.setInt(2, termid);
+                   
+                int updateCount = ps.executeUpdate();
                 
-                // INSERT YOUR CODE HERE
+                if (updateCount > 0) {
+            
+                    result = true;
+
+                }
+                
                 
             }
             
@@ -120,7 +166,29 @@ public class RegistrationDAO {
             
             if (conn.isValid(0)) {
                 
-                // INSERT YOUR CODE HERE
+                ps = conn.prepareStatement(QUERY_SELECT);
+                ps.setInt(1, studentid);
+                ps.setInt(2, termid);
+                boolean hasresults = ps.execute();
+                if (hasresults) {
+
+                    rs = ps.getResultSet();
+
+                    while(rs.next()) {
+                        JsonObject Student_id = new JsonObject();
+                        JsonObject Term_id = new JsonObject();
+                        JsonArray RegistrationArray = new JsonArray();
+                        Student_id.put("studentid", rs.getInt(studentid));
+                        Term_id.put("termid", rs.getInt(termid));
+                        RegistrationArray.add(Student_id);
+                        RegistrationArray.add(Term_id);
+                        
+                        result = RegistrationArray.toString();
+                        
+                        
+                    }
+
+                }
                 
             }
             

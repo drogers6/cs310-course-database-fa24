@@ -27,6 +27,8 @@ public class Main {
             
         }
         
+        System.out.println( sectionDao.find(1, "CS", "201") );
+        
     }
     
 }
